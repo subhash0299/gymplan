@@ -8,10 +8,17 @@ import { Dumbbell } from 'lucide-react';
 
 function App() {
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan | null>(null);
+  const [lastUserData, setLastUserData] = useState<UserData | null>(null);
 
   const handleFormSubmit = (userData: UserData) => {
-    const plan = generateWorkoutPlan(userData);
-    setWorkoutPlan(plan);
+    setLastUserData(userData);
+    setWorkoutPlan(generateWorkoutPlan(userData));
+  };
+
+  const handleRegenerate = () => {
+    if (lastUserData) {
+      setWorkoutPlan(generateWorkoutPlan(lastUserData));
+    }
   };
 
   const handleDownloadPDF = () => {
@@ -22,6 +29,7 @@ function App() {
 
   const handleStartOver = () => {
     setWorkoutPlan(null);
+    setLastUserData(null);
   };
 
   return (
@@ -46,6 +54,7 @@ function App() {
           <WorkoutPlanDisplay
             plan={workoutPlan}
             onDownloadPDF={handleDownloadPDF}
+            onRegenerate={handleRegenerate}
             onStartOver={handleStartOver}
           />
         )}

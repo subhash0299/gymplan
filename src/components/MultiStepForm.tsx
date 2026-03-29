@@ -9,17 +9,19 @@ interface MultiStepFormProps {
 export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<UserData>({
+    name: '',
     fitnessGoal: '',
     experienceLevel: '',
     workoutLocation: '',
     equipment: '',
     workoutDays: 4,
+    scheduleRestDays: false,
     age: '',
     height: '',
     weight: ''
   });
 
-  const totalSteps = 8;
+  const totalSteps = 10;
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -38,20 +40,24 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.fitnessGoal !== '';
+        return true;
       case 2:
-        return formData.experienceLevel !== '';
+        return formData.fitnessGoal !== '';
       case 3:
-        return formData.workoutLocation !== '';
+        return formData.experienceLevel !== '';
       case 4:
-        return formData.equipment !== '';
+        return formData.workoutLocation !== '';
       case 5:
-        return formData.workoutDays > 0;
+        return formData.equipment !== '';
       case 6:
-        return formData.age !== '';
+        return formData.workoutDays > 0;
       case 7:
-        return formData.height !== '';
+        return true;
       case 8:
+        return formData.age !== '';
+      case 9:
+        return formData.height !== '';
+      case 10:
         return formData.weight !== '';
       default:
         return false;
@@ -63,11 +69,28 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
       case 1:
         return (
           <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">What should we call you?</h2>
+            <p className="text-gray-600 mb-6">Optional—used on your PDF cover.</p>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Your name"
+              className="w-full p-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none"
+              autoComplete="name"
+            />
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">What's your fitness goal?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {['Build Muscle', 'Lose Fat', 'Gain Strength', 'Stay Fit'].map((goal) => (
                 <button
                   key={goal}
+                  type="button"
                   onClick={() => setFormData({ ...formData, fitnessGoal: goal as UserData['fitnessGoal'] })}
                   className={`p-6 rounded-xl border-2 transition-all ${
                     formData.fitnessGoal === goal
@@ -82,7 +105,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 2:
+      case 3:
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">What's your experience level?</h2>
@@ -90,7 +113,10 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
               {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
                 <button
                   key={level}
-                  onClick={() => setFormData({ ...formData, experienceLevel: level as UserData['experienceLevel'] })}
+                  type="button"
+                  onClick={() =>
+                    setFormData({ ...formData, experienceLevel: level as UserData['experienceLevel'] })
+                  }
                   className={`p-6 rounded-xl border-2 transition-all ${
                     formData.experienceLevel === level
                       ? 'border-orange-500 bg-orange-50'
@@ -104,7 +130,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Where will you workout?</h2>
@@ -112,7 +138,10 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
               {['Home', 'Gym'].map((location) => (
                 <button
                   key={location}
-                  onClick={() => setFormData({ ...formData, workoutLocation: location as UserData['workoutLocation'] })}
+                  type="button"
+                  onClick={() =>
+                    setFormData({ ...formData, workoutLocation: location as UserData['workoutLocation'] })
+                  }
                   className={`p-6 rounded-xl border-2 transition-all ${
                     formData.workoutLocation === location
                       ? 'border-orange-500 bg-orange-50'
@@ -126,7 +155,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">What equipment do you have?</h2>
@@ -134,6 +163,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
               {['None', 'Dumbbells', 'Full Gym'].map((equipment) => (
                 <button
                   key={equipment}
+                  type="button"
                   onClick={() => setFormData({ ...formData, equipment: equipment as UserData['equipment'] })}
                   className={`p-6 rounded-xl border-2 transition-all ${
                     formData.equipment === equipment
@@ -148,14 +178,15 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 5:
+      case 6:
         return (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">How many days per week?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">How many training days per week?</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[3, 4, 5, 6].map((days) => (
                 <button
                   key={days}
+                  type="button"
                   onClick={() => setFormData({ ...formData, workoutDays: days })}
                   className={`p-6 rounded-xl border-2 transition-all ${
                     formData.workoutDays === days
@@ -171,7 +202,44 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 6:
+      case 7:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Schedule rest days in your week?</h2>
+            <p className="text-gray-600 mb-6">
+              If yes, we spread your sessions across seven days with rest days between—more like a real calendar.
+              If no, we list only your training days (Day 1, Day 2, …) with no rest entries.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, scheduleRestDays: true })}
+                className={`p-6 rounded-xl border-2 text-left transition-all ${
+                  formData.scheduleRestDays === true
+                    ? 'border-orange-500 bg-orange-50'
+                    : 'border-gray-200 hover:border-orange-300'
+                }`}
+              >
+                <span className="text-lg font-semibold">Yes</span>
+                <p className="text-sm text-gray-600 mt-2">Show a 7-day week with rest days marked</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, scheduleRestDays: false })}
+                className={`p-6 rounded-xl border-2 text-left transition-all ${
+                  formData.scheduleRestDays === false
+                    ? 'border-orange-500 bg-orange-50'
+                    : 'border-gray-200 hover:border-orange-300'
+                }`}
+              >
+                <span className="text-lg font-semibold">No</span>
+                <p className="text-sm text-gray-600 mt-2">Only list my workout days</p>
+              </button>
+            </div>
+          </div>
+        );
+
+      case 8:
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">How old are you?</h2>
@@ -187,7 +255,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 7:
+      case 9:
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">What's your height?</h2>
@@ -201,7 +269,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
           </div>
         );
 
-      case 8:
+      case 10:
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">What's your weight?</h2>
@@ -239,12 +307,11 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-        {renderStep()}
-      </div>
+      <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">{renderStep()}</div>
 
       <div className="flex justify-between gap-4">
         <button
+          type="button"
           onClick={handleBack}
           disabled={currentStep === 1}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
@@ -258,6 +325,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
         </button>
 
         <button
+          type="button"
           onClick={handleNext}
           disabled={!canProceed()}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
@@ -266,7 +334,7 @@ export default function MultiStepForm({ onSubmit }: MultiStepFormProps) {
               : 'bg-gray-100 text-gray-400 cursor-not-allowed'
           }`}
         >
-          {currentStep === totalSteps ? 'Generate Plan' : 'Next'}
+          {currentStep === totalSteps ? 'Generate plan' : 'Next'}
           <ChevronRight size={20} />
         </button>
       </div>
